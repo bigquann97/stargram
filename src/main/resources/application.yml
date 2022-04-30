@@ -8,15 +8,30 @@ server:
       force: true
 
 spring:
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/security?serverTimezone=Asia/Seoul
-    username: cos
-    password: cos1234
+    url: jdbc:mysql://stargram-db.c1avsete3gyf.ap-northeast-2.rds.amazonaws.com:3306/stargram
+#    url: jdbc:mysql://localhost:3306/stargram?serverTimezone=Asia/Seoul
+    username: stargram
+    password: stargram
 
   jpa:
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          lob:
+            non_contextual_creation: true
+
     hibernate:
       ddl-auto: create #create update none
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+
     show-sql: true
+
+  mvc:
+    converters:
+      preferred-json-mapper: gson
