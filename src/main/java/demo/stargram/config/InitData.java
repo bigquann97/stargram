@@ -22,9 +22,9 @@ public class InitData {
     @PostConstruct
     public void initAccount() {
         RegisterDto testUser = RegisterDto.builder()
-                .name("김관호")
+                .name("tempname")
                 .email("testEmail@test.com")
-                .username("bigquan97")
+                .username("tempid1234")
                 .password("temppassword1234!")
                 .passwordCheck("temppassword1234!")
                 .build();

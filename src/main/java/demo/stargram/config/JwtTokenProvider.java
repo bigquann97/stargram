@@ -22,11 +22,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JwtTokenProvider {
 
-    private String secretKey = "stargram";
+    private String secretKey = "stargram"; // base64로 인코딩될 예정
 
     private long tokenValidTime = 1000L * 60 * 30; // 1초 * 60 * 30 = 30분
 
-    private final UserDetailsService userDetailsService;
+    private final PrincipalDetailService principalDetailService;
 
     // 객체 초기화, secretKey Base64로 인코딩
     @PostConstruct
@@ -49,8 +49,8 @@ public class JwtTokenProvider {
 
     // 인증 성공시 SecurityContextHolder에 저장할 Authentication 객체 생성
     public Authentication getAuthentication(String token) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(this.getUserPk(token));
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+        PrincipalDetail principalDetail = principalDetailService.loadUserByUsername(this.getUserPk(token));
+        return new UsernamePasswordAuthenticationToken(principalDetail, "", principalDetail.getAuthorities());
     }
     
     // 토큰에서 회원 정보 추출
