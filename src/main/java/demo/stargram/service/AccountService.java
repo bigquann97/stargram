@@ -1,8 +1,8 @@
 package demo.stargram.service;
 
-import demo.stargram.domain.Account;
-import demo.stargram.dto.RegisterDto;
-import demo.stargram.repository.AccountRepository;
+import demo.stargram.domain.account.Account;
+import demo.stargram.web.dto.account.RegisterDto;
+import demo.stargram.domain.account.AccountRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -81,5 +81,10 @@ public class AccountService {
         }
 
         return true;
+    }
+
+    public Account findAccount(String userId) {
+        Account account = accountRepository.findUserByUsername(userId).orElseThrow(() -> new UsernameNotFoundException("없는 유저"));
+        return account;
     }
 }

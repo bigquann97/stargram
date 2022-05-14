@@ -1,6 +1,8 @@
 package demo.stargram.config;
 
 import com.google.common.collect.ImmutableList;
+import demo.stargram.config.jwt.JwtAuthenticationFilter;
+import demo.stargram.config.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

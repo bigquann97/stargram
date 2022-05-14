@@ -12,7 +12,6 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://stargram-db.c1avsete3gyf.ap-northeast-2.rds.amazonaws.com:3306/stargram
-#    url: jdbc:mysql://localhost:3306/stargram?serverTimezone=Asia/Seoul
     username: stargram
     password: stargram
 
@@ -32,6 +31,10 @@ spring:
 
     show-sql: true
 
-  mvc:
-    converters:
-      preferred-json-mapper: gson
+
+
+
+#
+
+
+#    url: jdbc:mysql://localhost:3306/stargram?serverTimezone=Asia/Seoul
