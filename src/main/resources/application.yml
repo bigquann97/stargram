@@ -31,10 +31,9 @@ spring:
 
     show-sql: true
 
-
-
-
-#
+  mvc:
+    converters:
+      preferred-json-mapper: gson
 
 
 #    url: jdbc:mysql://localhost:3306/stargram?serverTimezone=Asia/Seoul

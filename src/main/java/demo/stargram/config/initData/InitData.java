@@ -15,8 +15,6 @@ import javax.annotation.PostConstruct;
 public class InitData {
 
     private final AccountController accountController;
-    private final AccountRepository accountRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @PostConstruct
     public void initAccount() {
@@ -28,30 +26,7 @@ public class InitData {
                 .passwordCheck("temppassword1234!")
                 .build();
 
-        Account testManager = Account.builder()
-                .name("managerName")
-                .email("managerEmail@test.com")
-                .title("managerAccount")
-                .content("managerAccount")
-                .picUrl("/img/manager_profile.jpg")
-                .username("managerId")
-                .password(bCryptPasswordEncoder.encode("managerPw"))
-                .build();
-
-        Account testAdmin = Account.builder()
-                .name("adminName")
-                .email("adminEmail@test.com")
-                .title("adminAccount")
-                .content("adminAccount")
-                .picUrl("/img/admin_profile.jpg")
-                .username("adminId")
-                .password(bCryptPasswordEncoder.encode("adminPw"))
-                .build();
-
         accountController.registerAccount(testUser);
-        accountRepository.save(testManager);
-        accountRepository.save(testAdmin);
     }
-
 
 }

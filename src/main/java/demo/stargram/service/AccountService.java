@@ -87,4 +87,5 @@ public class AccountService {
         Account account = accountRepository.findUserByUsername(userId).orElseThrow(() -> new UsernameNotFoundException("없는 유저"));
         return account;
     }
+
 }

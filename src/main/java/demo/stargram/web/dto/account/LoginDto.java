@@ -18,14 +18,4 @@ public class LoginDto {
     @Min(1)
     @Max(50)
     String password;
-
 }
-
-/*
-{
-    "username": "bigquan97",
-    "password": "temppassword1234!"
-}
-
-
- */

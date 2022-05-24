@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -28,7 +29,7 @@ public class AccountController {
     @PostMapping("/api/signup")
     public ResponseEntity registerAccount(@RequestBody @Valid RegisterDto registerDto) {
         boolean isAvailable = accountService.validateSignup(registerDto);
-        if(isAvailable) {
+        if (isAvailable) {
             accountService.registerAccount(registerDto);
             return ResponseEntity.ok().build();
         } else {
@@ -51,14 +52,14 @@ public class AccountController {
             innerObj.addProperty("token", token);
             innerObj.addProperty("username", jwtTokenProvider.getUserPk(token));
 
-            outerObj.addProperty("ok", true);
-            outerObj.add("result", innerObj);
+            ResponseEntity<JsonObject> a = ResponseEntity.ok()
+                    .header("token", token)
+                    .body(innerObj);
 
-            return ResponseEntity.ok(outerObj);
+            return a;
         } else {
             throw new IllegalArgumentException("잘못된 ID or PW");
         }
-
     }
 
     // 로그아웃
@@ -67,5 +68,8 @@ public class AccountController {
         return null;
     }
 
-
+    @GetMapping("/info")
+    public ResponseEntity<List<Account>> findAccount() {
+        return ResponseEntity.ok().body(List.of(accountService.findAccount("tempid1234")));
+    }
 }

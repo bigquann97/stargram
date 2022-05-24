@@ -2,10 +2,7 @@ package demo.stargram.config.jwt;
 
 import demo.stargram.config.auth.PrincipalDetail;
 import demo.stargram.config.auth.PrincipalDetailService;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,7 +20,7 @@ public class JwtTokenProvider {
 
     private String secretKey = "stargram"; // base64로 인코딩될 예정
 
-    private long tokenValidTime = 1000L * 60 * 30; // 1초 * 60 * 30 = 30분
+    private long tokenValidTime = 1000L * 60 * 30; // 60초 * 30 = 30분
 
     private final PrincipalDetailService principalDetailService;
 

@@ -30,14 +30,3 @@ public class RegisterDto {
 
 }
 
-/*
-
-{
-    "email": "bigquan97@naver.com",
-    "name": "김관호",
-    "username": "bigquan97",
-    "password": "temppassword1234!",
-    "passwordCheck": "temppassword1234!"
-}
-
-*/
