@@ -1,6 +1,8 @@
 package demo.stargram.service;
 
+import demo.stargram.config.jwt.JwtTokenProvider;
 import demo.stargram.domain.account.Account;
+import demo.stargram.web.dto.account.LoginDto;
 import demo.stargram.web.dto.account.RegisterDto;
 import demo.stargram.domain.account.AccountRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ public class AccountService {
 
     private final AccountRepository accountRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
 
     // 회원가입 유효성 체크
     public boolean validateSignup(RegisterDto registerDto) {
@@ -37,7 +40,7 @@ public class AccountService {
             return false;
         }
 
-        return true; // 정상 회원가입
+        return true; // 회원가입 가능
     }
 
     // 회원가입
@@ -55,32 +58,30 @@ public class AccountService {
         );
     }
 
-    // 로그인 로직 - last login 수정 + Account 받아오기
-    @Transactional
-    public Account login(Map<String, String> account) {
-        LocalDateTime now = LocalDateTime.now();
-        Account found = accountRepository.findUserByUsername(account.get("username")).orElseThrow(() -> new UsernameNotFoundException("유저 찾을 수 없음"));
-        found.setLastLogin(now);
-        return found;
-    }
-    
     // 로그인 유효성 검증
-    public boolean validateLogin(Map<String, String> account) {
-        Optional<Account> found = accountRepository.findUserByUsername(account.get("username"));
+    public boolean validateLogin(LoginDto loginDto) {
+        Optional<Account> found = accountRepository.findUserByUsername(loginDto.getUsername());
 
         if(found.isEmpty()) {
-            log.info("가입되지 않은 회원");
+            log.info("존재하지 않은 ID의 로그인 시도");
             return false;
         }
 
         String encodedPw = found.get().getPassword();
 
-        if(!bCryptPasswordEncoder.matches(account.get("password"), encodedPw)) {
-            log.info("비밀번호 불일치");
+        if(!bCryptPasswordEncoder.matches(loginDto.getPassword(), encodedPw)) {
+            log.info("비밀번호 불일치 로그인 시도");
             return false;
         }
 
         return true;
+    }
+
+    // 로그인 로직 - last login 수정 + Account 받아오기
+    @Transactional
+    public Account login(LoginDto loginDto) {
+        Account found = accountRepository.findUserByUsername(loginDto.getUsername()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 계정"));
+        return found;
     }
 
     public Account findAccount(String userId) {

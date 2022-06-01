@@ -30,3 +30,13 @@ public class RegisterDto {
 
 }
 
+
+/*
+{
+    "email": "tempEmail@naver.com",
+    "name": "홍길동",
+    "username": "tempid134",
+    "password": "temppassword1234!",
+    "passwordCheck": "temppassword1234!"
+}
+ */

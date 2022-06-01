@@ -18,7 +18,7 @@ public class MyPageController {
 
     private final AccountService accountService;
 
-    @GetMapping("/{userId}")
+    @GetMapping("/api/{userId}")
     public ResponseEntity<?> myProfile(@PathVariable String userId, @AuthenticationPrincipal PrincipalDetail principalDetail) {
 
         String username = principalDetail.getUsername();

@@ -32,6 +32,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
+    // Cors Setting - 검색해보기
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -46,6 +47,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+
         http.cors().configurationSource(corsConfigurationSource());
 
         http
@@ -53,18 +55,29 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic().disable() // rest API 전용 - 기본설정 해제
                 .headers().frameOptions().disable()
 
+                // 세션을 사용하지 않음
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
+                // url 설정
                 .and()
-                .authorizeRequests()
-                .antMatchers("/h2-console/**").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/article/**").authenticated()
-                .antMatchers(HttpMethod.POST, "/api/comment/**").authenticated()
-                .antMatchers(HttpMethod.POST, "/api/account/**").authenticated()
+                .authorizeRequests() // 요청 사용 권한 체크
+                .antMatchers("/api/login").permitAll()
+                .antMatchers("/api/signup").permitAll()
+                .antMatchers("/info").authenticated()
+                .antMatchers("/user").hasAnyRole("USER", "MANAGER", "ADMIN")
+                .antMatchers("/manager").hasAnyRole("MANAGER","ADMIN")
+                .antMatchers("/admin").hasRole("ADMIN")
                 .anyRequest().permitAll()
 
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+                // JwtAuthenticationFilter 를 UsernamePasswordAuthenticationFilter 전에 넣는다
+
     }
 }
+
+//
+//                .antMatchers(HttpMethod.POST, "/api/article/**").authenticated()
+//                        .antMatchers(HttpMethod.POST, "/api/comment/**").authenticated()
+//                        .antMatchers(HttpMethod.POST, "/api/account/**").authenticated()
