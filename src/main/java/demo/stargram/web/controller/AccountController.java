@@ -2,6 +2,7 @@ package demo.stargram.web.controller;
 
 import com.google.gson.JsonObject;
 import demo.stargram.config.jwt.JwtTokenProvider;
+import demo.stargram.config.jwt.Token;
 import demo.stargram.domain.account.Account;
 import demo.stargram.web.dto.account.LoginDto;
 import demo.stargram.web.dto.account.RegisterDto;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -50,10 +50,11 @@ public class AccountController {
             Account acc = accountService.login(loginDto);
 
             JsonObject returnObj = new JsonObject();
-            String accessToken = jwtTokenProvider.createToken(acc.getUsername(), acc.getRoles());
+            Token token = jwtTokenProvider.createToken(acc.getUsername(), acc.getRoles());
 
-            returnObj.addProperty("token", accessToken);
-            returnObj.addProperty("username", jwtTokenProvider.getUserPk(accessToken));
+            returnObj.addProperty("token", token.getAccessToken());
+            returnObj.addProperty("refreshToken", token.getRefreshToken());
+            returnObj.addProperty("username", jwtTokenProvider.getUserPk(token.getAccessToken()));
 
             return ResponseEntity.ok(returnObj);
         } else {

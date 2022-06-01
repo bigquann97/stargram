@@ -2,6 +2,7 @@ package demo.stargram.config.jwt;
 
 import demo.stargram.config.auth.PrincipalDetail;
 import demo.stargram.config.auth.PrincipalDetailService;
+import demo.stargram.domain.refreshToken.RefreshToken;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,20 +35,28 @@ public class JwtTokenProvider {
     }
 
     // JWT 토큰 생성
-    public String createToken(String userPk, List<String> roles) {
-        // JWT payload 에 저장되는 정보단위, 보통 여기서 user를 식별하는 값을 넣는다.
-        Claims claims = Jwts.claims().setSubject(userPk);
+    public Token createToken(String username, List<String> roles) {
 
-        // 정보는 key / value 쌍으로 저장된다.
-        claims.put("roles", roles);
-
+        Claims claims = Jwts.claims().setSubject(username); // JWT payload 에 저장되는 정보단위, 보통 여기서 user를 식별하는 값을 넣는다.
+        claims.put("roles", roles); // 정보는 key / value 쌍으로 저장된다.
         Date now = new Date();
-        return Jwts.builder()
+
+        // Access Token
+        String accessToken = Jwts.builder()
                 .setClaims(claims) // 정보 저장
                 .setIssuedAt(now) // 토큰 발행 시간 정보
                 .setExpiration(new Date(now.getTime() + accessTokenValidTime)) // set Expire Time
                 .signWith(SignatureAlgorithm.HS256, secretKey) // 사용할 암호화 알고리즘과 signature 에 들어갈 secret 값 세팅
                 .compact();
+
+        String refreshToken = Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(new Date(now.getTime() + refreshTokenValidTime))
+                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .compact();
+
+        return Token.builder().accessToken(accessToken).refreshToken(refreshToken).key(username).build();
     }
 
     // 인증 성공시 SecurityContextHolder에 저장할 Authentication 객체 생성
@@ -75,5 +84,40 @@ public class JwtTokenProvider {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public String validateRefreshToken(RefreshToken refreshTokenObj){
+        // refresh 객체에서 refreshToken 추출
+        String refreshToken = refreshTokenObj.getRefreshToken();
+        try {
+            // 검증
+            Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(refreshToken);
+            //refresh 토큰의 만료시간이 지나지 않았을 경우, 새로운 access 토큰을 생성합니다.
+            if (!claims.getBody().getExpiration().before(new Date())) {
+                return recreationAccessToken(claims.getBody().get("sub").toString(), claims.getBody().get("roles"));
+            }
+        } catch (Exception e) {
+            //refresh 토큰이 만료되었을 경우, 로그인이 필요합니다.
+            return null;
+        }
+        return null;
+    }
+
+    public String recreationAccessToken(String username, Object roles){
+
+        Claims claims = Jwts.claims().setSubject(username); // JWT payload 에 저장되는 정보단위
+        claims.put("roles", roles); // 정보는 key / value 쌍으로 저장된다.
+        Date now = new Date();
+
+        //Access Token
+        String accessToken = Jwts.builder()
+                .setClaims(claims) // 정보 저장
+                .setIssuedAt(now) // 토큰 발행 시간 정보
+                .setExpiration(new Date(now.getTime() + accessTokenValidTime)) // set Expire Time
+                .signWith(SignatureAlgorithm.HS256, secretKey)  // 사용할 암호화 알고리즘과
+                // signature 에 들어갈 secret값 세팅
+                .compact();
+
+        return accessToken;
     }
 }
