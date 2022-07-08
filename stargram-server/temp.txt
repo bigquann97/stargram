@@ -1,0 +1,4 @@
+aws rds
+DB인스턴스 식별자 - stargram-db
+마스터 사용자 이름 - stargram
+마스터 암호 - stargram
